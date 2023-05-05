@@ -33,6 +33,10 @@ pcen_w = data_test_op(:,42:44);%42-44
 
 ww = data_test_op(:,45:47);%45-47
 
+terminal = data_test_op(:,48:53);
+
+Loff = data_test_op(:,54:56);
+
 figure;%1
 for i = 1:3
     subplot(4,3,i);
@@ -98,7 +102,9 @@ for i = 1:3
     subplot(3,3,i);
     plot(psw_Tkf_t(:,i),'b');
     hold on;
-%     plot(data_foot_out(:,14),'r');
+    plot(psw(:,i),'r');
+    hold on;
+    plot(swing(:,1)-1,'g');
     legend("psw_Tkf_t");
 
     subplot(3,3,i+3);
@@ -143,7 +149,17 @@ subplot(3,2,6);
 plot(swing,'b');
 legend("swing");
 
+figure;%6
+for i = 1:6
+    subplot(2,3,i);
+    plot(terminal(:,i));
+end
 
+figure;%7
+for i = 1:3
+    subplot(2,3,i);
+    plot(Loff(:,i));
+end
 
 
 

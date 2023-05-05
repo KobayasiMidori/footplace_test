@@ -16,8 +16,9 @@ double pB_fk[6];
 double pas_delta[4];
 int count = 0;
 double pCoM[3], vCoM[3], pfW[3], peW[6], pf2cen_ar[3];
-double L[3], Lm[3];
+double L[3], Lm[3], Loff[3];
 double yaw0;
+double terminal[6],terminal0[6];
 
 FileOperator fileRW("../test_in.txt");
 
@@ -84,6 +85,15 @@ int main() {
         legSptInd[0] = fileRW.values[34];
         legSptInd[1] = fileRW.values[35];
 
+        if (s < 0.000001 && s > -0.0000001) {
+            terminal0[0] = terminal[0];
+            terminal0[1] = terminal[1];
+            terminal0[2] = terminal[2];
+            terminal0[3] = terminal[3];
+            terminal0[4] = terminal[4];
+            terminal0[5] = terminal[5];
+        }
+
         // kalman filter
         Eigen::Matrix<double,3,3> R, I, Iw;
         Eigen::Matrix<double,3,1> pf2cen, ww, vw, p_cen_b, p_cen_w, p_com_w;
@@ -132,6 +142,9 @@ int main() {
         Lm[0] = AngularMomentum.Lm(0);
         Lm[1] = AngularMomentum.Lm(1);
         Lm[2] = AngularMomentum.Lm(2);
+        Loff[0] = AngularMomentum.Loff(0);
+        Loff[1] = AngularMomentum.Loff(1);
+        Loff[2] = AngularMomentum.Loff(2);
         pf2cen_ar[0] = pf2cen(0);
         pf2cen_ar[1] = pf2cen(1);
         pf2cen_ar[2] = pf2cen(2);
@@ -147,6 +160,22 @@ int main() {
         }
 
         foot.cal(L, pf2cen_ar, s, v_des, p_des);
+        if (swing == 1){
+            terminal[0] = ((1+cos(3.1415926*s))*terminal0[0] + (1-cos(3.1415926*s))*foot.psw_Tkf_t[0])/2;
+            terminal[1] = ((1+cos(3.1415926*s))*terminal0[1] + (1-cos(3.1415926*s))*foot.psw_Tkf_t[1])/2;
+            terminal[2] = terminal0[2];
+            terminal[3] = terminal0[3];
+            terminal[4] = terminal0[4];
+            terminal[5] = terminal0[5];
+        }
+        else{
+            terminal[0] = terminal0[0];
+            terminal[1] = terminal0[1];
+            terminal[2] = terminal0[2];
+            terminal[3] = ((1+cos(3.1415926*s))*terminal0[3] + (1-cos(3.1415926*s))*foot.psw_Tkf_t[0])/2;
+            terminal[4] = ((1+cos(3.1415926*s))*terminal0[4] + (1-cos(3.1415926*s))*foot.psw_Tkf_t[1])/2;
+            terminal[5] = terminal0[5];
+        }
 
         count++;
         // output data
@@ -205,6 +234,17 @@ int main() {
         tmpValue.push_back(ww(0));//45
         tmpValue.push_back(ww(1));//46
         tmpValue.push_back(ww(2));//47
+
+        tmpValue.push_back(terminal[0]);//48
+        tmpValue.push_back(terminal[1]);//49
+        tmpValue.push_back(terminal[2]);//50
+        tmpValue.push_back(terminal[3]);//51
+        tmpValue.push_back(terminal[4]);//52
+        tmpValue.push_back(terminal[5]);//53
+
+        tmpValue.push_back(Loff[0]);//54
+        tmpValue.push_back(Loff[1]);//55
+        tmpValue.push_back(Loff[2]);//56
 
         tmpStr = fmt::format("{:.5f}", fmt::join(tmpValue, " "));
         LOG_INFO(dl, "{}", tmpStr);

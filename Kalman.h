@@ -16,12 +16,16 @@ class Angular_Momentum_class {
                  Eigen::Matrix<double, 3, 1> v, Eigen::Matrix<double, 3, 3> I);
 
         Eigen::Matrix<double, 3, 3>  I;
-        Eigen::Matrix<double, 3, 1>  L, Lcom, Lm;
+        Eigen::Matrix<double, 3, 1>  L, Lcom, Lm, Loff;
 
-        Eigen::Matrix<double, 3, 1>    x0b, u0, y1;
-        Eigen::Matrix<double, 3, 3>    A, B, C;
-        Eigen::Matrix<double, 3, 3>    Q, Qu, R;
-        Eigen::Matrix<double, 3, 3>    P0b;
+        Eigen::Matrix<double, 6, 1>    x0b;
+        Eigen::Matrix<double, 3, 1>    u0, y1;
+        Eigen::Matrix<double, 6, 6>    A;
+        Eigen::Matrix<double, 6, 3>    B;
+        Eigen::Matrix<double, 3, 6>    C;
+        Eigen::Matrix<double, 6, 6>    Q, Qu;
+        Eigen::Matrix<double, 3, 3>    R;
+        Eigen::Matrix<double, 6, 6>    P0b;
         bool startFlag;
 
         double  Ts = 0.001;
